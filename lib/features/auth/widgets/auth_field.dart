@@ -21,7 +21,8 @@ class AuthField extends StatelessWidget {
           ),
           contentPadding: const EdgeInsets.all(22),
           hintText: hintText,
-          hintStyle: const TextStyle(fontSize: 18)),
+          hintStyle:
+              const TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
     );
   }
 }
