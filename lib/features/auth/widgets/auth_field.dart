@@ -13,16 +13,24 @@ class AuthField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      cursorColor: Colors.blue,
       controller: controller,
       decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: const BorderSide(color: Pallete.greyColor),
           ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(
+                color: Pallete.greyColor), // Customize non-focused border color
+          ),
           contentPadding: const EdgeInsets.all(22),
           hintText: hintText,
-          hintStyle:
-              const TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+          hintStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.normal,
+          )),
     );
   }
 }
