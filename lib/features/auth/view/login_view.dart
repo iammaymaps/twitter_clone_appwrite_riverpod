@@ -11,7 +11,7 @@ import 'package:twitter_clone_appwrite_riverpod/theme/pallete.dart';
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
-  static route() => MaterialPageRoute(builder: (context) => const LoginView());
+  static const routeName = '/login-screen';
   @override
   ConsumerState<LoginView> createState() => _LoginViewState();
 }
@@ -20,7 +20,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final appbar = UIConstants.appBar();
-  
+
   @override
   void dispose() {
     super.dispose();
@@ -78,7 +78,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.push(context, SignupView.route());
+                                    Navigator.pushNamed(
+                                        context, SignupView.routeName);
                                   }),
                           ]))
                     ],

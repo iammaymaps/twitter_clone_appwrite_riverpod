@@ -11,7 +11,7 @@ import 'package:twitter_clone_appwrite_riverpod/theme/pallete.dart';
 
 class SignupView extends ConsumerStatefulWidget {
   const SignupView({super.key});
-  static route() => MaterialPageRoute(builder: (context) => const SignupView());
+  static const routeName = '/signup-screen';
   @override
   ConsumerState<SignupView> createState() => _SignupViewState();
 }
@@ -77,7 +77,8 @@ class _SignupViewState extends ConsumerState<SignupView> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.push(context, LoginView.route());
+                                    Navigator.pushNamed(
+                                        context, LoginView.routeName);
                                   }),
                           ]))
                     ],
