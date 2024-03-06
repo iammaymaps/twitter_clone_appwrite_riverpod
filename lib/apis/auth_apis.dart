@@ -29,6 +29,16 @@ class AuthAPI implements IAuthAPI {
     required Account account,
   }) : _account = account;
   @override
+  Future<model.User?> currentUserAccount() async {
+    try {
+      return _account.get();
+    } on AppwriteException catch (e, stackTrace) {
+      return null;
+    } catch (e, stackTrace) {
+      return null;
+    }
+  }
+
   FutureEither<model.User> signup(
       {required String email, required String password}) async {
     try {

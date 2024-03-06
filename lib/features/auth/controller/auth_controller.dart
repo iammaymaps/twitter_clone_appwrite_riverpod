@@ -1,11 +1,19 @@
 import 'package:flutter/widgets.dart';
+import 'package:appwrite/models.dart' as model;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_appwrite_riverpod/apis/auth_apis.dart';
 import 'package:twitter_clone_appwrite_riverpod/core/utils.dart';
+import 'package:twitter_clone_appwrite_riverpod/features/Home/home_view.dart';
 
 final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(authAPI: ref.watch(authAPIProvider));
+});
+
+final currentAuthProvider = FutureProvider((ref) async {
+  final authController = ref.watch(authControllerProvider.notifier);
+
+  return authController.currentUser();
 });
 
 class AuthController extends StateNotifier<bool> {
@@ -14,6 +22,8 @@ class AuthController extends StateNotifier<bool> {
   AuthController({required AuthAPI authAPI})
       : _authAPI = authAPI,
         super(false);
+
+  Future<model.User?> currentUser() => _authAPI.currentUserAccount();
 
   void signUp({
     required String email,
@@ -25,7 +35,9 @@ class AuthController extends StateNotifier<bool> {
     state = false;
     res.fold((l) {
       showSnackBar(context, l.message);
-    }, (r) => print("Hellosasdas ${r.email}"));
+    }, (r) {
+      Navigator.pushNamed(context, Homeview.routeName);
+    });
   }
 
   void logIn({
@@ -36,8 +48,9 @@ class AuthController extends StateNotifier<bool> {
     state = true;
     final res = await _authAPI.login(email: email, password: password);
     state = false;
-    res.fold((l) => showSnackBar(context, l.message),
-        (r) => print("Hellosasdas ${r.clientType}"));
+    res.fold((l) => showSnackBar(context, l.message), (r) {
+      Navigator.pushNamed(context, Homeview.routeName);
+    });
   }
 }
  

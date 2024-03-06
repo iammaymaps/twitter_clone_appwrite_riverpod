@@ -2,6 +2,10 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:twitter_clone_appwrite_riverpod/common/error.dart';
+import 'package:twitter_clone_appwrite_riverpod/common/loading_page.dart';
+import 'package:twitter_clone_appwrite_riverpod/features/Home/home_view.dart';
+import 'package:twitter_clone_appwrite_riverpod/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone_appwrite_riverpod/features/auth/view/login_view.dart';
 import 'package:twitter_clone_appwrite_riverpod/router.dart';
 import 'package:twitter_clone_appwrite_riverpod/theme/app_theme.dart';
@@ -14,16 +18,10 @@ void main() => runApp(
       ),
     );
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,
@@ -32,7 +30,15 @@ class _MyAppState extends State<MyApp> {
       title: 'Flutter Demo',
       theme: AppTheme.theme,
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: const LoginView(),
+      home: ref.watch(currentAuthProvider).when(
+          data: (user) {
+            if (user != null) {
+              return const Homeview();
+            }
+            return const LoginView();
+          },
+          error: (error, st) => ErrorPage(error: error.toString()),
+          loading: () => const LoadingPage()),
     );
   }
 }
