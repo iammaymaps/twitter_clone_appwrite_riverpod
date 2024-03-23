@@ -5,6 +5,7 @@ import 'package:twitter_clone_appwrite_riverpod/apis/auth_apis.dart';
 import 'package:twitter_clone_appwrite_riverpod/apis/user_apis.dart';
 import 'package:twitter_clone_appwrite_riverpod/core/utils.dart';
 import 'package:twitter_clone_appwrite_riverpod/features/Home/home_view.dart';
+import 'package:twitter_clone_appwrite_riverpod/features/auth/view/login_view.dart';
 import 'package:twitter_clone_appwrite_riverpod/models/user_models.dart';
 
 final authControllerProvider =
@@ -13,10 +14,33 @@ final authControllerProvider =
       authAPI: ref.watch(authAPIProvider), userAPI: ref.watch(userAPIProvider));
 });
 
+// final currentUserDetailsProvider = FutureProvider((ref) async {
+//   final userAccount = ref.watch(currentAuthProvider).value;
+//   if (userAccount != null) {
+//     final currentUserId = userAccount.$id;
+//     final userDetails = ref.watch(userDetailsProvider(currentUserId));
+//     return userDetails.value;
+//   } else {
+//     // handle the situation when userAccount is null
+//     return null;
+//   }
+// });
+
+final currentUserDetailsProvider = FutureProvider((ref) {
+  final currentUserId = ref.watch(currentAuthProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  return userDetails.value;
+});
+
+final userDetailsProvider = FutureProvider.family((ref, String uid) {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.getUserData(uid);
+});
 final currentAuthProvider = FutureProvider((ref) async {
   final authController = ref.watch(authControllerProvider.notifier);
-
-  return authController.currentUser();
+  final user = await authController.currentUser();
+  print('User: $user');
+  return user;
 });
 
 class AuthController extends StateNotifier<bool> {
@@ -42,19 +66,20 @@ class AuthController extends StateNotifier<bool> {
     }, (r) async {
       UserModels userModels = UserModels(
           email: email,
-          name: "",
-          profilePic: "",
-          bannerPic: "",
-          uid: "uid",
-          bio: "",
+          name: geteNameFromEmail(email),
+          profilePic: '',
+          bannerPic: '',
+          uid: r.$id,
+          bio: '',
           isTwitterblue: false,
-          followers: [],
-          followings: []);
+          followers: const [],
+          followings: const []);
       final res2 = await _userAPI.saveUserData(userModels);
       res2.fold((l) {
         showSnackBar(context, l.message);
       }, (r) {
-        Navigator.pushNamed(context, Homeview.routeName);
+        showSnackBar(context, 'Accounted created!.');
+        Navigator.pushNamed(context, LoginView.routeName);
       });
     });
   }
@@ -71,8 +96,12 @@ class AuthController extends StateNotifier<bool> {
       Navigator.pushNamed(context, Homeview.routeName);
     });
   }
-}
- 
 
+  Future<UserModels> getUserData(String uid) async {
+    final document = await _userAPI.getUserData(uid);
+    final updateUserdata = UserModels.fromMap(document.data);
+    return updateUserdata;
+  }
+}
 
 //65e087271dcb9b44f6d3

@@ -37,7 +37,10 @@ class MyApp extends ConsumerWidget {
             }
             return const LoginView();
           },
-          error: (error, st) => ErrorPage(error: error.toString()),
+          error: (error, st) {
+            ErrorPage(error: error.toString());
+            print("$error is gone");
+          },
           loading: () => const LoadingPage()),
     );
   }
